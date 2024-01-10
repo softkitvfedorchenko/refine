@@ -1,33 +1,40 @@
 import { AuthBindings } from "@refinedev/core";
+import { axiosInstance, generateSort, generateFilter } from "@refinedev/simple-rest";
 
 export const TOKEN_KEY = "refine-auth";
 
-export const authProvider: AuthBindings = {
-    login: async ({ username, email, password }) => {
-        if ((username || email) && password) {
-            localStorage.setItem(TOKEN_KEY, username);
-            return {
-                success: true,
-                redirectTo: "/",
-            };
-        }
+export const authProvider = (apiUrl: string): AuthBindings => {
+    return {
+        login: async () => {
+            const res = await axiosInstance.post(`${apiUrl}/auth/signin`,
+                { "email": "onevovan@softkitit.com", "password": "Qwer!234" }
+            );
 
-        return {
-            success: false,
-            error: {
-                name: "LoginError",
-                message: "Invalid username or password",
-            },
-        };
-    },
-    logout: async () => {
+            console.log('res: ', res);
+            if (res.data) {
+                localStorage.setItem(TOKEN_KEY, res.data.accessToken);
+                return {
+                    success: true,
+                    redirectTo: "/",
+                };
+            }
+
+            return {
+                success: false,
+                error: {
+                    name: "LoginError",
+                    message: "Invalid username or password",
+                },
+            };
+        },
+            logout: async () => {
         localStorage.removeItem(TOKEN_KEY);
         return {
             success: true,
             redirectTo: "/login",
         };
     },
-    check: async () => {
+        check: async () => {
         const token = localStorage.getItem(TOKEN_KEY);
         if (token) {
             return {
@@ -40,8 +47,8 @@ export const authProvider: AuthBindings = {
             redirectTo: "/login",
         };
     },
-    getPermissions: async () => null,
-    getIdentity: async () => {
+        getPermissions: async () => null,
+        getIdentity: async () => {
         const token = localStorage.getItem(TOKEN_KEY);
         if (token) {
             return {
@@ -52,8 +59,9 @@ export const authProvider: AuthBindings = {
         }
         return null;
     },
-    onError: async (error) => {
-        console.error(error);
-        return { error };
-    },
+        onError: async (error) => {
+            console.error(error);
+            return { error };
+        },
+    };
 };

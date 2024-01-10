@@ -14,7 +14,8 @@ import {
 } from "@refinedev/antd";
 import { Table, Space } from "antd";
 
-import { createInferencer } from "../../create-inferencer";
+// import { createInferencer } from "../../create-inferencer";
+import { createSchemaInferencer } from '../../../from-scheme/create-schema-inferencer';
 import {
     jsx,
     componentName,
@@ -24,29 +25,29 @@ import {
     noOp,
     getVariableName,
     getMetaProps,
-} from "../../utilities";
+} from "../../../utilities";
 
-import { ErrorComponent } from "./error";
-import { LoadingComponent } from "./loading";
-import { SharedCodeViewer } from "../../components/shared-code-viewer";
+import { ErrorComponent } from "../error";
+import { LoadingComponent } from "../loading";
+import { SharedCodeViewer } from "../../../components/shared-code-viewer";
 
 import {
-    InferencerResultComponent,
     InferField,
     ImportElement,
     RendererContext,
-} from "../../types";
+    SchemaInferencerResultComponent,
+} from '../../../from-scheme/types';
 
 /**
  * a renderer function for list page in Ant Design
  * @internal used internally from inferencer components
  */
 export const renderer = ({
-    resource,
-    fields,
-    meta,
-    isCustomPage,
-    i18n,
+     resource,
+     fields,
+     meta,
+     isCustomPage,
+     i18n,
 }: RendererContext) => {
     const COMPONENT_NAME = componentName(
         resource.label ?? resource.name,
@@ -107,10 +108,10 @@ export const renderer = ({
                         enabled: !!${recordName},
                     },
                     ${getMetaProps(
-                        field?.resource?.identifier ?? field?.resource?.name,
-                        meta,
-                        "getMany",
-                    )}
+                    field?.resource?.identifier ?? field?.resource?.name,
+                    meta,
+                    "getMany",
+                )}
                 });
                 `;
             }
@@ -134,8 +135,8 @@ export const renderer = ({
             const dataIndex = field.multiple
                 ? `dataIndex="${field.key}"`
                 : `dataIndex={["${field.key}", ${
-                      field.accessor ? `"${field.accessor}"` : ""
-                  }]}`;
+                    field.accessor ? `"${field.accessor}"` : ""
+                }]}`;
 
             const title = `title=${translatePrettyString({
                 resource,
@@ -169,10 +170,10 @@ export const renderer = ({
                 render = `render={(value: any[]) => ${loadingCondition} (
                     <>
                         {${accessor(
-                            "value",
-                            undefined,
-                            // field.accessor,
-                        )}?.map((item, index) => (
+                    "value",
+                    undefined,
+                    // field.accessor,
+                )}?.map((item, index) => (
                             <TagField key={index} value={${val}} />
                         ))}
                     </>
@@ -205,8 +206,8 @@ export const renderer = ({
                 Array.isArray(field.accessor) || field.multiple
                     ? `dataIndex="${field.key}"`
                     : `dataIndex={["${field.key}", ${
-                          field.accessor ? `"${field.accessor}"` : ""
-                      }]}`;
+                        field.accessor ? `"${field.accessor}"` : ""
+                    }]}`;
 
             const title = `title=${translatePrettyString({
                 resource,
@@ -243,8 +244,8 @@ export const renderer = ({
                 Array.isArray(field.accessor) || field.multiple
                     ? `dataIndex="${field.key}"`
                     : `dataIndex={["${field.key}", ${
-                          field.accessor ? `"${field.accessor}"` : ""
-                      }]}`;
+                        field.accessor ? `"${field.accessor}"` : ""
+                    }]}`;
 
             const title = `title=${translatePrettyString({
                 resource,
@@ -287,8 +288,8 @@ export const renderer = ({
                 Array.isArray(field.accessor) || field.multiple
                     ? `dataIndex="${field.key}"`
                     : `dataIndex={["${field.key}", ${
-                          field.accessor ? `"${field.accessor}"` : ""
-                      }]}`;
+                        field.accessor ? `"${field.accessor}"` : ""
+                    }]}`;
 
             const title = `title=${translatePrettyString({
                 resource,
@@ -323,8 +324,8 @@ export const renderer = ({
                 Array.isArray(field.accessor) || field.multiple
                     ? `dataIndex="${field.key}"`
                     : `dataIndex={["${field.key}", ${
-                          field.accessor ? `"${field.accessor}"` : ""
-                      }]}`;
+                        field.accessor ? `"${field.accessor}"` : ""
+                    }]}`;
 
             const title = `title=${translatePrettyString({
                 resource,
@@ -360,8 +361,8 @@ export const renderer = ({
                 Array.isArray(field.accessor) || field.multiple
                     ? `dataIndex="${field.key}"`
                     : `dataIndex={["${field.key}", ${
-                          field.accessor ? `"${field.accessor}"` : ""
-                      }]}`;
+                        field.accessor ? `"${field.accessor}"` : ""
+                    }]}`;
 
             const title = `title=${translatePrettyString({
                 resource,
@@ -401,8 +402,8 @@ export const renderer = ({
                 Array.isArray(field.accessor) || field.multiple
                     ? `dataIndex="${field.key}"`
                     : field.accessor
-                    ? `dataIndex={["${field.key}", "${field.accessor}"]}`
-                    : `dataIndex="${field.key}"`;
+                        ? `dataIndex={["${field.key}", "${field.accessor}"]}`
+                        : `dataIndex="${field.key}"`;
 
             const title = `title=${translatePrettyString({
                 resource,
@@ -508,38 +509,38 @@ export const renderer = ({
                 render={(_, record: BaseRecord) => (
                     <Space>
                     ${
-                        canEdit
-                            ? jsx`
+                canEdit
+                    ? jsx`
                         <EditButton
                             hideText
                             size="small"
                             recordItemId={record.id}
                         />
                         `
-                            : ""
-                    }
+                    : ""
+            }
                     ${
-                        canShow
-                            ? jsx`
+                canShow
+                    ? jsx`
                         <ShowButton
                             hideText
                             size="small"
                             recordItemId={record.id}
                         />
                         `
-                            : ""
-                    }
+                    : ""
+            }
                     ${
-                        canDelete
-                            ? jsx`
+                canDelete
+                    ? jsx`
                         <DeleteButton
                             hideText
                             size="small"
                             recordItemId={record.id}
                         />
                         `
-                            : ""
-                    }
+                    : ""
+            }
                     </Space>
                 )}
             />
@@ -575,38 +576,38 @@ export const renderer = ({
     const useTranslateHook = i18n && `const translate = useTranslate();`;
 
     return jsx`
-    ${printImports(imports)}
+        ${printImports(imports)}
 
-    export const ${COMPONENT_NAME}: React.FC<IResourceComponentsProps> = () => {
-        ${useTranslateHook}
-        const { tableProps } = useTable({
-            syncWithLocation: true,
-            ${isCustomPage ? ` resource: "${resource.name}",` : ""}
-            ${getMetaProps(
-                resource?.identifier ?? resource?.name,
-                meta,
-                "getList",
-            )}
-        });
+        export const ${COMPONENT_NAME}: React.FC<IResourceComponentsProps> = () => {
+            ${useTranslateHook}
+            const { tableProps } = useTable({
+                syncWithLocation: true,
+                ${isCustomPage ? ` resource: "${resource.name}",` : ""}
+                ${getMetaProps(
+        resource?.identifier ?? resource?.name,
+        meta,
+        "getList",
+    )}
+            });
 
-        ${relationHooksCode}
+            ${relationHooksCode}
 
-        return (
-            <List>
-                <Table {...tableProps} rowKey="id">
-                    ${renderedFields.join("\r\n")}
-                    ${actionButtons}
-                </Table>
-            </List>
-        );
-    };
+            return (
+                <List>
+                    <Table {...tableProps} rowKey="id">
+                        ${renderedFields.join("\r\n")}
+                        ${actionButtons}
+                    </Table>
+                </List>
+            );
+        };
     `;
 };
 
 /**
  * @experimental This is an experimental component
  */
-export const ListInferencer: InferencerResultComponent = createInferencer({
+export const ListInferencer: SchemaInferencerResultComponent = createSchemaInferencer({
     type: "list",
     additionalScope: [
         [

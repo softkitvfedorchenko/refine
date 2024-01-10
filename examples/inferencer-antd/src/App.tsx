@@ -15,12 +15,13 @@ import routerBindings, {
     NavigateToResource,
     UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
-import dataProvider from "@refinedev/simple-rest";
+// import dataProvider from "@refinedev/simple-rest";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { authProvider } from "./authProvider";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
+import { dataProvider } from './data-provider';
 import {
     BlogPostCreate,
     BlogPostEdit,
@@ -53,11 +54,11 @@ function App() {
                 <ColorModeContextProvider>
                     <Refine
                         dataProvider={dataProvider(
-                            "https://api.fake-rest.refine.dev",
+                            "http://localhost:3000/api/platform/v1",
                         )}
                         notificationProvider={notificationProvider}
                         routerProvider={routerBindings}
-                        authProvider={authProvider}
+                        authProvider={authProvider("http://localhost:3000/api/platform/v1")}
                         i18nProvider={i18nProvider}
                         resources={[
                             {
@@ -71,12 +72,15 @@ function App() {
                                 },
                             },
                             {
-                                name: "categories",
-                                list: "/categories",
-                                create: "/categories/create",
-                                edit: "/categories/edit/:id",
-                                show: "/categories/show/:id",
+                                name: "roles",
+                                list: "/roles",
+                                create: "/roles/create",
+                                edit: "/roles/edit/:id",
+                                show: "/roles/show/:id",
                                 meta: {
+                                    headers: {
+                                        Authorization: `Bearer ${localStorage.getItem('refine-auth')}`,
+                                    },
                                     canDelete: true,
                                 },
                             },
@@ -127,7 +131,7 @@ function App() {
                                         element={<BlogPostShow />}
                                     />
                                 </Route>
-                                <Route path="/categories">
+                                <Route path="/roles">
                                     <Route index element={<CategoryList />} />
                                     <Route
                                         path="create"
