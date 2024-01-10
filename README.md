@@ -1,7 +1,9 @@
-#How to start:
+# How to run in dev mode:
 
 `cd refine/examples/inferencer-antd`
 `npm run start -- --scope @refinedev/antd --scope @refinedev/inferencer --scope inferencer-antd`
+
+-----------------
 
 <div align="center">
 <a href="https://refine.dev/">
