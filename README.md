@@ -1,8 +1,13 @@
+#How to start:
+
+`cd refine/examples/inferencer-antd`
+`npm run start -- --scope @refinedev/antd --scope @refinedev/inferencer --scope inferencer-antd`
+
 <div align="center">
 <a href="https://refine.dev/">
     <img alt="refine logo" src="https://refine.ams3.cdn.digitaloceanspaces.com/readme/refine-readme-banner.png">
 </a>
-  
+
 <br/>
 <br/>
 
